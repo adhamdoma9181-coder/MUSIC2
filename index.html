@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#11131a">
+  <meta name="description" content="مشغل موسيقى حديث للموسيقى المحلية">
+  <title>MUSIC - مشغل الموسيقى</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <button class="icon-button menu-button" id="menuButton" aria-label="القائمة" onclick="toggleTopMenu()">
+        <svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg>
+      </button>
+      <div class="brand"><span>MUSIC</span></div>
+      <span style="width:42px"></span>
+    </header>
+
+    <main>
+      <section class="page active" id="libraryPage">
+        <div class="hero-row">
+          <div>
+            <p class="eyebrow" data-i18n="yourLibrary">مكتبتك</p>
+            <h1 data-i18n="music">الموسيقى</h1>
+          </div>
+        </div>
+
+        <div class="search-box" id="searchBox">
+          <input id="searchInput" type="search" placeholder="ابحث في الأغاني" data-i18n-placeholder="searchSongs">
+          <span class="search-song-count"><strong id="songCount">0</strong> <small data-i18n="songs">songs</small></span>
+          <div class="search-current-art" id="searchCurrentArt"><span>♪</span></div>
+        </div>
+
+        <div class="section-heading">
+          <h2 data-i18n="allSongs">كل الأغاني</h2>
+          <select id="sortSelect" class="select">
+            <option value="title" data-i18n="sortTitle">Title</option>
+            <option value="time" data-i18n="sortTime">Date</option>
+            <option value="size" data-i18n="sortSize">Size</option>
+          </select>
+        </div>
+        <div class="track-list" id="trackList">
+          <div class="empty-state" id="emptyState">
+            <div class="empty-art"><svg viewBox="0 0 24 24"><path d="M9 18V5l10-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="16" cy="16" r="3"/></svg></div>
+            <h3 data-i18n="emptyTitle">مكتبتك هادئة حاليًا</h3>
+            <p data-i18n="emptyText">أضف أغانيك لتبدأ الاستماع</p>
+            <button class="primary-button" id="emptyAddButton" data-i18n="chooseSongs">اختيار الأغاني</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="page" id="favoritesPage">
+        <div class="hero-row favorites-header">
+          <button class="back-button" id="favoritesBack" aria-label="رجوع" onclick="closeFavorites()">
+            <svg viewBox="0 0 24 24"><path d="m15 5-7 7 7 7"/></svg>
+          </button>
+          <div><p class="eyebrow" data-i18n="favorites">Favorites</p><h1 data-i18n="likedSongs">Liked Songs</h1></div>
+        </div>
+        <div class="track-list" id="favoritesList"></div>
+      </section>
+    </main>
+
+    <div class="mini-player" id="miniPlayer" hidden>
+      <button class="art-button" id="miniArtButton" aria-label="فتح المشغل">
+        <div class="cover cover-small" id="miniCover"><span>♪</span></div>
+      </button>
+      <button class="track-meta" id="miniTrackButton">
+        <strong id="miniTitle">اسم الأغنية</strong>
+        <small id="miniArtist">فنان مجهول</small>
+      </button>
+      <button class="player-icon" id="miniPrev" aria-label="السابق"><svg viewBox="0 0 24 24"><path d="M6 5v14M18 5l-8 7 8 7Z"/></svg></button>
+      <button class="play-button" id="miniPlay" aria-label="تشغيل"><svg class="play-svg" viewBox="0 0 24 24"><path d="m8 5 11 7-11 7Z"/></svg></button>
+      <button class="player-icon" id="miniNext" aria-label="التالي"><svg viewBox="0 0 24 24"><path d="M18 5v14M6 5l8 7-8 7Z"/></svg></button>
+    </div>
+
+    <div class="top-menu" id="topMenu" hidden>
+      <button id="favoritesMenu" data-i18n="favorites" onclick="openFavorites()">Favorites</button>
+      <button id="settingsMenu" data-i18n="settings" onclick="openSettings()">Settings</button>
+    </div>
+
+    <div class="modal-backdrop" id="settingsModal" hidden>
+      <div class="modal-sheet">
+        <div class="sheet-grip"></div>
+        <div class="sheet-header"><h2 data-i18n="settings">Settings</h2><button class="close-button" data-close-modal>×</button></div>
+        <div class="setting-row">
+          <div><strong data-i18n="appLanguage">App Language</strong></div>
+          <select id="languageSelect" class="select">
+            <option value="en">English</option><option value="ar">العربية</option><option value="zh">中文</option>
+            <option value="fr">Français</option><option value="ja">日本語</option><option value="ko">한국어</option>
+            <option value="es">Español</option><option value="de">Deutsch</option><option value="it">Italiano</option>
+            <option value="pt">Português</option><option value="ru">Русский</option><option value="hi">हिन्दी</option>
+            <option value="bn">বাংলা</option><option value="tr">Türkçe</option><option value="vi">Tiếng Việt</option>
+            <option value="th">ไทย</option><option value="id">Bahasa Indonesia</option><option value="ms">Bahasa Melayu</option>
+            <option value="fa">فارسی</option><option value="ur">اردو</option><option value="sw">Kiswahili</option>
+            <option value="nl">Nederlands</option><option value="pl">Polski</option><option value="uk">Українська</option>
+            <option value="cs">Čeština</option><option value="sk">Slovenčina</option><option value="hu">Magyar</option>
+            <option value="ro">Română</option><option value="el">Ελληνικά</option><option value="he">עברית</option>
+            <option value="sv">Svenska</option><option value="no">Norsk</option><option value="da">Dansk</option>
+            <option value="fi">Suomi</option><option value="hr">Hrvatski</option><option value="sr">Српски</option>
+            <option value="bg">Български</option><option value="sl">Slovenščina</option><option value="et">Eesti</option>
+            <option value="lv">Latviešu</option><option value="lt">Lietuvių</option><option value="is">Íslenska</option>
+            <option value="ca">Català</option><option value="eu">Euskara</option><option value="gl">Galego</option>
+            <option value="af">Afrikaans</option><option value="am">አማርኛ</option><option value="my">မြန်မာဘာသာ</option>
+            <option value="km">ភាសាខ្មែរ</option><option value="lo">ລາວ</option><option value="ne">नेपाली</option>
+            <option value="si">සිංහල</option><option value="ta">தமிழ்</option><option value="te">తెలుగు</option>
+            <option value="ml">മലയാളം</option><option value="kn">ಕನ್ನಡ</option><option value="mr">मराठी</option>
+            <option value="gu">ગુજરાતી</option><option value="pa">ਪੰਜਾਬੀ</option><option value="ka">ქართული</option>
+            <option value="hy">Հայերեն</option><option value="az">Azərbaycan dili</option><option value="uz">Oʻzbekcha</option>
+            <option value="kk">Қазақ тілі</option><option value="mn">Монгол</option><option value="zu">isiZulu</option>
+            <option value="xh">isiXhosa</option>
+          </select>
+        </div>
+        <div class="setting-row">
+          <div><strong data-i18n="theme">Theme</strong></div>
+          <select id="themeSelect" class="select">
+            <option value="dark" data-i18n="dark">Dark</option>
+            <option value="light" data-i18n="light">Light</option>
+          </select>
+        </div>
+        <div class="setting-row color-row">
+          <div><strong data-i18n="accentColor">Accent Color</strong></div>
+          <div class="swatches" id="swatches">
+            <button class="swatch active" style="--swatch:#f1f1ef" data-color="#f1f1ef" aria-label="White"></button>
+            <button class="swatch" style="--swatch:#c7c7c7" data-color="#c7c7c7" aria-label="Silver"></button>
+            <button class="swatch" style="--swatch:#ffffff" data-color="#ffffff" aria-label="Pure White"></button>
+            <button class="swatch" style="--swatch:#8f8f8f" data-color="#8f8f8f" aria-label="Gray"></button>
+            <label class="custom-color-picker" aria-label="Custom color">
+              <input id="customColor" class="custom-color" type="color" value="#f1f1ef">
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-backdrop" id="playerModal" hidden>
+      <div class="modal-sheet">
+        <div class="sheet-grip"></div>
+        <div class="sheet-header"><h2 data-i18n="nowPlaying">Now Playing</h2><button class="close-button" data-close-player>×</button></div>
+        <div class="player-controls"><strong data-i18n="speed">Playback Speed</strong><small id="speedValue">1.0×</small><input class="range" id="speedRange" type="range" min="0.5" max="2" step="0.1" value="1"></div>
+        <div class="setting-row">
+          <div><strong data-i18n="volume">Volume</strong><small id="volumeValue">100%</small></div>
+          <input class="range" id="volumeRange" type="range" min="0" max="100" step="1" value="100">
+        </div>
+        <div class="setting-row">
+          <div><strong data-i18n="repeat">Repeat</strong><small id="repeatStatus" data-i18n="off">Off</small></div>
+          <select id="repeatSelect" class="select">
+            <option value="off" data-i18n="off">Off</option>
+            <option value="one" data-i18n="repeatOne">Repeat This Song</option>
+            <option value="all" data-i18n="repeatAll">Repeat All</option>
+          </select>
+        </div>
+        <div class="setting-row">
+          <div><strong data-i18n="sleepTimer">Sleep Timer</strong><small id="sleepStatus" data-i18n="off">Off</small></div>
+          <select id="sleepSelect" class="select">
+            <option value="0" data-i18n="off">Off</option><option value="15">15 min</option><option value="30">30 min</option>
+            <option value="60">60 min</option><option value="120">120 min</option>
+            <option value="custom" data-i18n="custom">Custom</option>
+            <option value="current" data-i18n="endOfSong">End of Song</option>
+          </select>
+        </div>
+        <div class="setting-row" id="customSleepRow" hidden>
+          <div><strong data-i18n="custom">Custom</strong></div>
+          <input id="customSleepMinutes" class="number-input" type="number" min="1" max="1440" value="45" inputmode="numeric">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <audio id="audio"></audio>
+  <script src="app.js"></script>
+</body>
+</html>
